@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace MakeRss.JsonEntities
 {
     [Serializable]
-    internal class FeedInfo
+    internal class PlaylistInfo
     {
         
         [JsonPropertyName("id")] public string Id { get; set; }

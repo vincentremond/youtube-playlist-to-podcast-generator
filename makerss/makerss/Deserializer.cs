@@ -7,8 +7,8 @@ namespace MakeRss
 {
     internal static class Deserializer
     {
-        internal static async Task<FeedInfo> ReadFeedInfoAsync(string playlistId) =>
-            await GetAsync<FeedInfo>(FileLocator.FeedInfo(playlistId));
+        internal static async Task<PlaylistInfo> ReadPlaylistInfoAsync(string playlistId) =>
+            await GetAsync<PlaylistInfo>(FileLocator.PlaylistInfo(playlistId));
 
         internal static async Task<VideoInfo> ReadVideoInfo(string playlistId, string videoId) =>
             await GetAsync<VideoInfo>(FileLocator.VideoInfo(playlistId, videoId));

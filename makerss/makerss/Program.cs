@@ -7,41 +7,44 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Serialization;
 using MakeRss.FeedDescription;
+using MakeRss.Helpers;
 using MakeRss.JsonEntities;
 using Guid = MakeRss.FeedDescription.Guid;
 
 namespace MakeRss
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string playlistId)
+        private static async Task Main(string playlistId)
         {
-            //GenerateSampleData();
-            Environment.CurrentDirectory = @"C:\Users\vince\Downloads\WL-Listen";
-            playlistId = "PLr2bpJwdJdMhtv0CV8QjP6AU7DAX0PpNw";
+            if (string.IsNullOrEmpty(playlistId))
+            {
+                Environment.CurrentDirectory = @"C:\Users\vince\Downloads\WL-Listen";
+                playlistId = "PLr2bpJwdJdMhtv0CV8QjP6AU7DAX0PpNw";
+            }
 
-            var feedInfo = await Deserializer.ReadFeedInfoAsync(playlistId);
+            var playlistInfo = await Deserializer.ReadPlaylistInfoAsync(playlistId);
 
             var logoUrl = UrlLocator.Hosting("youtube-logo.png");
-            var description = $"Podcast feed for Youtube playlist \"{feedInfo.Title}\" from user {feedInfo.Uploader}.";
+            var description = $"Podcast feed for Youtube playlist \"{playlistInfo.Title}\" from user {playlistInfo.Uploader}.";
             var feed = new Rss
             {
                 Channel = new Channel
                 {
-                    Title = feedInfo.Title,
-                    Link = feedInfo.WebpageUrl,
+                    Title = playlistInfo.Title,
+                    Link = playlistInfo.WebpageUrl,
                     Description = description,
                     Language = Constants.DefaultLanguage,
-                    Copyright = feedInfo.Uploader,
+                    Copyright = playlistInfo.Uploader,
                     LastBuildDate = DateTimeOffset.Now.ToString("R"),
-                    Generator = feedInfo.Uploader,
+                    Generator = playlistInfo.Uploader,
                     Image = new Image
                     {
                         Url = logoUrl,
-                        Title = feedInfo.Title,
-                        Link = feedInfo.WebpageUrl,
+                        Title = playlistInfo.Title,
+                        Link = playlistInfo.WebpageUrl,
                     },
-                    Author = feedInfo.Uploader,
+                    Author = playlistInfo.Uploader,
                     Category = new Category
                     {
                         Text = "Society & Culture",
@@ -58,34 +61,46 @@ namespace MakeRss
                     },
                     Owner = new Owner
                     {
-                        Email = $"{feedInfo.UploaderId}@youtube.com",
-                        Name = feedInfo.Uploader,
+                        Email = $"{playlistInfo.UploaderId}@youtube.com",
+                        Name = playlistInfo.Uploader,
                     },
-                    Subtitle = feedInfo.Title,
+                    Subtitle = playlistInfo.Title,
                     Summary = description,
                 }
             };
 
-            feed.Channel.Items = await GetFeedItemsAsync(feedInfo)
+            feed.Channel.Items = await GetFeedItemsAsync(playlistInfo)
                 .OrderByDescending(i => i.PubDate)
                 .ThenByDescending(i => i.Title)
                 .ToListAsync();
 
-            RemoveExtraFiles();
+            RemoveExtraFiles(playlistInfo);
 
             WriteXmlFeed(feed, FileLocator.XmlFeed(playlistId));
         }
 
-        private static void RemoveExtraFiles()
+        private static void RemoveExtraFiles(PlaylistInfo playlistInfo)
         {
-            // TODO VRM
+            var directory = FileLocator.PlaylistDirectory(playlistInfo.Id);
+            var directoryInfo = new DirectoryInfo(directory);
+            var subDirectories = directoryInfo.GetDirectories();
+
+            var orphans = subDirectories
+                .WhereNotIn(playlistInfo.Entries, s => s.Name, e => e.Id)
+                .ToList();
+
+            foreach (var orphan in orphans)
+            {
+                Console.WriteLine($"Removing old files : {orphan.FullName}");
+                orphan.Delete(true);
+            }
         }
 
-        private static async IAsyncEnumerable<Item> GetFeedItemsAsync(FeedInfo feedInfo)
+        private static async IAsyncEnumerable<Item> GetFeedItemsAsync(PlaylistInfo playlistInfo)
         {
-            foreach (var item in feedInfo.Entries)
+            foreach (var item in playlistInfo.Entries)
             {
-                var videoInfo = await Deserializer.ReadVideoInfo(feedInfo.Id, item.Id);
+                var videoInfo = await Deserializer.ReadVideoInfo(playlistInfo.Id, item.Id);
 
 
                 yield return new Item

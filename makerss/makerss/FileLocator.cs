@@ -2,7 +2,10 @@
 {
     internal class FileLocator
     {
-        public static string FeedInfo(string playlistId)
+        public static string PlaylistDirectory(string playlistId)
+            => $@"data\{playlistId}\";
+
+        public static string PlaylistInfo(string playlistId)
             => $@"data\{playlistId}\playlist.json";
 
         public static string XmlFeed(string playlistId)
