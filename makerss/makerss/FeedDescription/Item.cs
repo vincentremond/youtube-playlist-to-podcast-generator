@@ -10,11 +10,11 @@ namespace MakeRss.FeedDescription
     [XmlRoot(ElementName = "item")]
     public class Item
     {
-        [XmlAnyElement("ItemComment")] public XmlComment ItemComment
-        {
-            get => new XmlDocument().CreateComment(Title);
-            set => throw new NotImplementedException();
-        }
+        // [XmlAnyElement("ItemComment")] public XmlComment ItemComment
+        // {
+        //     get => new XmlDocument().CreateComment(Title);
+        //     set => throw new NotImplementedException();
+        // }
 
         [XmlElement(ElementName = "title")] public string Title { get; set; }
         [XmlElement(ElementName = "link")] public string Link { get; set; }
