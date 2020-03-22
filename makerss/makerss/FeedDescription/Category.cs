@@ -7,7 +7,6 @@ namespace MakeRss.FeedDescription
     public class Category
     {
         [XmlAttribute(AttributeName = "text")] public string Text { get; set; }
-
         [XmlElement(ElementName = "category", Namespace = Namespaces.AppleItunes)] public Category InnerCategory { get; set; }
     }
 }

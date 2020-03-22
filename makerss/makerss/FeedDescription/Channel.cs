@@ -17,7 +17,6 @@ namespace MakeRss.FeedDescription
         [XmlElement(ElementName = "image")] public Image Image { get; set; }
         [XmlElement(ElementName = "author", Namespace = Namespaces.AppleItunes)] public string Author { get; set; }
         [XmlElement(ElementName = "category", Namespace = Namespaces.AppleItunes)] public Category Category { get; set; }
-
         [XmlElement(ElementName = "explicit", Namespace = Namespaces.AppleItunes)] public string Explicit { get; set; }
         [XmlElement(ElementName = "image", Namespace = Namespaces.AppleItunes)] public ImageHref ImageItunes { get; set; }
         [XmlElement(ElementName = "owner", Namespace = Namespaces.AppleItunes)] public Owner Owner { get; set; }

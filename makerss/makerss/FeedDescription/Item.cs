@@ -22,10 +22,7 @@ namespace MakeRss.FeedDescription
         [XmlElement(ElementName = "author")] public string Author { get; set; }
         [XmlElement(ElementName = "category")] public string Category { get; set; }
         [XmlElement(ElementName = "enclosure")] public Enclosure Enclosure { get; set; }
-
-
         [XmlElement(ElementName = "guid")] public Guid Guid { get; set; }
-
         [XmlIgnore] public DateTimeOffset PubDate { get; set; }
 
         [XmlElement(ElementName = "pubDate")] public string PubDateString
@@ -41,9 +38,7 @@ namespace MakeRss.FeedDescription
         }
 
         [XmlElement(ElementName = "author", Namespace = Namespaces.AppleItunes)] public string AuthorItunes { get; set; }
-
         [XmlElement(ElementName = "explicit", Namespace = Namespaces.AppleItunes)] public string Explicit { get; set; }
-
         [XmlElement(ElementName = "keywords", Namespace = Namespaces.AppleItunes)] public string Keywords { get; set; }
 
         [XmlElement(ElementName = "subtitle", Namespace = Namespaces.AppleItunes)] public string Subtitle
@@ -59,7 +54,6 @@ namespace MakeRss.FeedDescription
         }
 
         [XmlElement(ElementName = "duration", Namespace = Namespaces.AppleItunes)] public string Duration { get; set; }
-
         [XmlElement(ElementName = "block", Namespace = Namespaces.GooglePlayPodcasts)] public string Block { get; set; }
     }
 }

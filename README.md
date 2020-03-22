@@ -7,4 +7,5 @@ This program downloads a youtube playlist (audio only) with [youtube-dl](https:/
 - [x] Download with youtube-dl
 - [x] Create feed with downloaded files
 - [x] Cleanup old files
+- [x] Configurable base url
 - [ ] FTP Sync

@@ -15,7 +15,7 @@ namespace MakeRss
 {
     internal class Program
     {
-        private static async Task Main(string playlistId)
+        private static async Task Main(string playlistId, string hostingBaseUrl)
         {
             if (string.IsNullOrEmpty(playlistId))
             {
@@ -25,7 +25,7 @@ namespace MakeRss
 
             var playlistInfo = await Deserializer.ReadPlaylistInfoAsync(playlistId);
 
-            var logoUrl = UrlLocator.Hosting("youtube-logo.png");
+            var logoUrl = UrlLocator.Hosting(hostingBaseUrl, "youtube-logo.png");
             var description = $"Podcast feed for Youtube playlist \"{playlistInfo.Title}\" from user {playlistInfo.Uploader}.";
             var feed = new Rss
             {
@@ -69,7 +69,7 @@ namespace MakeRss
                 }
             };
 
-            feed.Channel.Items = await GetFeedItemsAsync(playlistInfo)
+            feed.Channel.Items = await GetFeedItemsAsync(playlistInfo, hostingBaseUrl)
                 .OrderByDescending(i => i.PubDate)
                 .ThenByDescending(i => i.Title)
                 .ToListAsync();
@@ -96,12 +96,11 @@ namespace MakeRss
             }
         }
 
-        private static async IAsyncEnumerable<Item> GetFeedItemsAsync(PlaylistInfo playlistInfo)
+        private static async IAsyncEnumerable<Item> GetFeedItemsAsync(PlaylistInfo playlistInfo, string hostingBaseUrl)
         {
             foreach (var item in playlistInfo.Entries)
             {
                 var videoInfo = await Deserializer.ReadVideoInfo(playlistInfo.Id, item.Id);
-
 
                 yield return new Item
                 {
@@ -112,7 +111,7 @@ namespace MakeRss
                     Category = "Leisure Games",
                     Enclosure = new Enclosure
                     {
-                        Url = UrlLocator.Hosting(videoInfo.PlaylistId, videoInfo.Id, "audio.mp3"),
+                        Url = UrlLocator.Hosting(hostingBaseUrl, videoInfo.PlaylistId, videoInfo.Id, "audio.mp3"),
                         Length = GetFileLenth(videoInfo.PlaylistId, videoInfo.Id),
                         Type = "audio/mpeg",
                     },
@@ -121,7 +120,7 @@ namespace MakeRss
                         IsPermalink = false,
                         Text = videoInfo.Id,
                     },
-                    PubDate = UpdaloadDateToDateTimeOffset(videoInfo.UploadDate),
+                    PubDate = UploadDateToDateTimeOffset(videoInfo.UploadDate),
                     Explicit = "yes",
                     AuthorItunes = videoInfo.UploaderId,
                     Keywords = $"youtube,{videoInfo.UploaderId}",
@@ -142,9 +141,9 @@ namespace MakeRss
             return new FileInfo(file).Length;
         }
 
-        private static DateTimeOffset UpdaloadDateToDateTimeOffset(string videoInfoUploadDate)
+        private static DateTimeOffset UploadDateToDateTimeOffset(string uploadDate)
         {
-            var match = Regex.Match(videoInfoUploadDate, @"^(?<Year>\d{4})(?<Month>\d{4})(?<Day>\d{2})$");
+            var match = Regex.Match(uploadDate, @"^(?<Year>\d{4})(?<Month>\d{4})(?<Day>\d{2})$");
             if (!match.Success)
             {
                 return DateTimeOffset.Now;
