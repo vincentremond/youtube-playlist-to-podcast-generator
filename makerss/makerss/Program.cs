@@ -143,7 +143,7 @@ namespace MakeRss
 
         private static DateTimeOffset UploadDateToDateTimeOffset(string uploadDate)
         {
-            var match = Regex.Match(uploadDate, @"^(?<Year>\d{4})(?<Month>\d{4})(?<Day>\d{2})$");
+            var match = Regex.Match(uploadDate, @"^(?<Year>\d{4})(?<Month>\d{2})(?<Day>\d{2})$");
             if (!match.Success)
             {
                 return DateTimeOffset.Now;
