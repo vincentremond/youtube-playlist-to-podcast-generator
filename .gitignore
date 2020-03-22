@@ -1,0 +1,5 @@
+data/PL*
+PL*.json
+downloaded.txt
+bin/
+obj/
