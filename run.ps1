@@ -20,6 +20,7 @@ youtube-dl `
     --write-info-json `
     --extract-audio `
     --audio-format mp3  `
+    --ignore-errors `
     https://www.youtube.com/playlist?list=$($playlistId)
 
 Write-Host "Generating Xml feed"

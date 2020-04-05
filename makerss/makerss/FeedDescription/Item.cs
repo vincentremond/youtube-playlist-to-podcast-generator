@@ -55,5 +55,6 @@ namespace MakeRss.FeedDescription
 
         [XmlElement(ElementName = "duration", Namespace = Namespaces.AppleItunes)] public string Duration { get; set; }
         [XmlElement(ElementName = "block", Namespace = Namespaces.GooglePlayPodcasts)] public string Block { get; set; }
+        [XmlElement(ElementName = "image", Namespace = Namespaces.AppleItunes)] public ImageHref Image { get; set; }
     }
 }

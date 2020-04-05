@@ -15,6 +15,11 @@ namespace MakeRss
 
         private static async Task<T> GetAsync<T>(string filePath)
         {
+            if (!File.Exists(filePath))
+            {
+                return default;
+            }
+
             var contents = await File.ReadAllTextAsync(filePath);
             return JsonSerializer.Deserialize<T>(contents);
         }

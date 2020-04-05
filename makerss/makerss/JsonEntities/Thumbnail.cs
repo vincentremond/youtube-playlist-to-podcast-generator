@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 namespace MakeRss.JsonEntities
 {
     [Serializable]
-    internal class Entry
+    internal class Thumbnail
     {
         [JsonPropertyName("id")] public string Id { get; set; }
-        [JsonPropertyName("title")] public string Title { get; set; }
+        [JsonPropertyName("url")] public string Url { get; set; }
     }
 }

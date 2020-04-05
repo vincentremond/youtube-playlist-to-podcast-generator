@@ -16,5 +16,8 @@
 
         public static string VideoFile(string playlistId, string videoId)
             => $@"data\{playlistId}\{videoId}\audio.mp3";
+
+        public static string VideoCover(string playlistId, string videoId)
+            => $@"data\{playlistId}\{videoId}\audio.jpg";
     }
 }

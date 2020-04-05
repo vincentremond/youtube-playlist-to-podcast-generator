@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -101,12 +102,19 @@ namespace MakeRss
             foreach (var item in playlistInfo.Entries)
             {
                 var videoInfo = await Deserializer.ReadVideoInfo(playlistInfo.Id, item.Id);
+                if (videoInfo == null)
+                {
+                    await Console.Error.WriteLineAsync($"Error: file info not found  for Id {item.Id} ({item.Title})");
+                    continue;
+                }
+
+                await DownloadImageCover(videoInfo);
 
                 yield return new Item
                 {
-                    Title = videoInfo.Title,
+                    Title = $"{videoInfo.Title} ⚡ {videoInfo.Uploader}",
                     Link = UrlLocator.Youtube(videoInfo.Id),
-                    Description = HtmlEncode(videoInfo.Description),
+                    Description = GenerateDescription(videoInfo),
                     Author = $"{videoInfo.ChannelId}@youtube.com",
                     Category = "Leisure Games",
                     Enclosure = new Enclosure
@@ -117,16 +125,61 @@ namespace MakeRss
                     },
                     Guid = new Guid
                     {
-                        IsPermalink = false,
-                        Text = videoInfo.Id,
+                        IsPermalink = true,
+                        Text = videoInfo.WebpageUrl,
                     },
                     PubDate = UploadDateToDateTimeOffset(videoInfo.UploadDate),
                     Explicit = "yes",
                     AuthorItunes = videoInfo.UploaderId,
-                    Keywords = $"youtube,{videoInfo.UploaderId}",
+                    Keywords = string.Join(",", GetTags(videoInfo)),
                     Duration = TimeSpan.FromSeconds(videoInfo.Duration).ToString("c"),
+                    Image = new ImageHref
+                    {
+                        Href = UrlLocator.Hosting(hostingBaseUrl, videoInfo.PlaylistId, videoInfo.Id, "audio.jpg"),
+                    },
                 };
             }
+        }
+
+        private static async Task DownloadImageCover(VideoInfo videoInfo)
+        {
+            var path = FileLocator.VideoCover(videoInfo.PlaylistId, videoInfo.Id);
+            if (!File.Exists(path))
+            {
+                var wc = new WebClient();
+                var thumbnail = videoInfo.Thumbnails.FirstOrDefault();
+                if (thumbnail == null)
+                {
+                    throw new Exception($"No thumbnail found for video {videoInfo.Id} / {videoInfo.Title}");
+                }
+
+                var videoUri = new Uri(thumbnail.Url);
+                await wc.DownloadFileTaskAsync(videoUri, path);
+            }
+        }
+
+        private static IEnumerable<string> GetTags(VideoInfo videoInfo)
+        {
+            yield return "youtube";
+            yield return videoInfo.UploaderId;
+            foreach (var tag in videoInfo.Tags)
+            {
+                yield return tag;
+            }
+        }
+
+        private static string GenerateDescription(VideoInfo videoInfo)
+        {
+            var before =
+                    $"📺 <b><a href=\"{videoInfo.WebpageUrl}\">{videoInfo.Title}</a></b>"
+                    + $"<br />"
+                    + $"💁 <a href=\"{videoInfo.UploaderUrl}\">{videoInfo.Uploader}</a>"
+                    + $"<br />" +
+                    $"−−−−−−"
+                    + $"<br />"
+                    + $"<br />"
+                ;
+            return before + HtmlEncode(videoInfo.Description);
         }
 
         private static string HtmlEncode(string description)

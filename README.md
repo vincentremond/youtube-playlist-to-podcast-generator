@@ -8,5 +8,9 @@ This program downloads a youtube playlist (audio only) with [youtube-dl](https:/
 - [x] Create feed with downloaded files
 - [x] Cleanup old files
 - [x] Configurable base url
-- [ ] FTP Sync
-- [ ] Error resilient when video is deleted
+- [ ] FTP Sync without WinSCP
+- [x] Error resilient when video is deleted
+- [x] Add url in description
+- [x] Add tags
+- [x] Add Channel name in title
+- [x] Add Video cover
