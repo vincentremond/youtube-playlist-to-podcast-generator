@@ -5,6 +5,9 @@
         public static string PlaylistDirectory(string playlistId)
             => $@"data\{playlistId}\";
 
+        public static string PlaylistDownloadedFiles(string playlistId)
+            => $@"data\{playlistId}\downloaded.txt";
+
         public static string PlaylistInfo(string playlistId)
             => $@"data\{playlistId}\playlist.json";
 
@@ -19,5 +22,8 @@
 
         public static string VideoCover(string playlistId, string videoId)
             => $@"data\{playlistId}\{videoId}\audio.jpg";
+        
+        public static string VideoFolder(string playlistId, string videoId)
+            => $@"data\{playlistId}\{videoId}\";
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -107,9 +108,14 @@ namespace MakeRss
                     await Console.Error.WriteLineAsync($"Error: file info not found  for Id {item.Id} ({item.Title})");
                     continue;
                 }
-
+                
                 await DownloadImageCover(videoInfo);
 
+                if (!await CheckSanity(playlistInfo.Id, item.Id))
+                {
+                    continue;
+                }
+                
                 yield return new Item
                 {
                     Title = $"{videoInfo.Title} ⚡ {videoInfo.Uploader}",
@@ -141,6 +147,38 @@ namespace MakeRss
             }
         }
 
+        private static async Task<bool> CheckSanity(string playlistId, string videoId)
+        {
+            var videoInfo = FileLocator.VideoInfo(playlistId, videoId);
+            var videoCover = FileLocator.VideoCover(playlistId, videoId);
+            var videoFile = FileLocator.VideoFile(playlistId, videoId);
+            if(File.Exists(videoInfo)
+                && File.Exists(videoCover)
+                && File.Exists(videoFile))
+            {
+                return true;
+            }
+
+            var folder = FileLocator.VideoFolder(playlistId, videoId);
+            Directory.Delete(folder, recursive: true);
+
+            await RemoveDownloadedStatusAsync(playlistId, videoId);
+           
+           return false;
+        }
+
+        private static async Task RemoveDownloadedStatusAsync(string playlistId, string videoId)
+        {
+            var downloaded = FileLocator.PlaylistDownloadedFiles(playlistId);
+            var contents = await File.ReadAllLinesAsync(downloaded, Encoding.UTF8);
+            var excludeContent = $"youtube {videoId}";
+            var newContents = contents
+                .Where(line => line != excludeContent)
+                .ToArray();
+
+            File.WriteAllLines(downloaded, newContents, Encoding.UTF8);
+        }
+
         private static async Task DownloadImageCover(VideoInfo videoInfo)
         {
             var path = FileLocator.VideoCover(videoInfo.PlaylistId, videoInfo.Id);
@@ -162,9 +200,12 @@ namespace MakeRss
         {
             yield return "youtube";
             yield return videoInfo.UploaderId;
-            foreach (var tag in videoInfo.Tags)
+            if(videoInfo.Tags != null)
             {
-                yield return tag;
+                foreach (var tag in videoInfo.Tags)
+                {
+                    yield return tag;
+                }
             }
         }
 
