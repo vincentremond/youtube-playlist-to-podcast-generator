@@ -4,3 +4,6 @@ downloaded.txt
 bin/
 obj/
 .idea/
+.ionide/
+data/
+results.adoc
