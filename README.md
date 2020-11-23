@@ -14,3 +14,7 @@ This program downloads a youtube playlist (audio only) with [youtube-dl](https:/
 - [x] Add tags
 - [x] Add Channel name in title
 - [x] Add Video cover
+
+## youtube-dlc
+
+- [youtube-dlc Latest version](https://github.com/blackjack4494/yt-dlc/releases/latest)
