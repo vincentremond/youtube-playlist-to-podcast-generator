@@ -3,6 +3,9 @@ param (
     $hostingBaseUrl = "https://pas-bien.net/wl-listen/"
 )
 
+# Try update youtube-dl
+gsudo.exe choco upgrade youtube-dl -y
+
 # Download playlist infos
 Write-Host "Download playlist infos... (might be slow and without output)" --ForegroundColor Yellow
 youtube-dl `
