@@ -15,3 +15,7 @@ JSON.stringify(
         })
 );
 ```
+
+``` powershell
+node index.js
+```
