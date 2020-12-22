@@ -8,7 +8,8 @@ This program downloads a youtube playlist (audio only) with [youtube-dl](https:/
 - [x] Create feed with downloaded files
 - [x] Cleanup old files
 - [x] Configurable base url
-- [ ] FTP Sync without WinSCP
+- [-] FTP Sync without WinSCP
+- [ ] FTP Sync with WinSCP nuget
 - [x] Error resilient when video is deleted
 - [x] Add url in description
 - [x] Add tags
@@ -18,3 +19,4 @@ This program downloads a youtube playlist (audio only) with [youtube-dl](https:/
 ## youtube-dlc
 
 - [youtube-dlc Latest version](https://github.com/blackjack4494/yt-dlc/releases/latest)
+
