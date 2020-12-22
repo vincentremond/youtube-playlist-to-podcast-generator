@@ -26,20 +26,6 @@ youtube-dl `
   --ignore-errors `
   https://www.youtube.com/playlist?list=$($playlistId)
 
-# Downloading Lives
-Write-Host "Downloading live videos... (might be very slow)" --ForegroundColor Yellow
-$liveDateFilter = ([System.DateTime]::Now).AddDays(-2).ToString("yyyyMMdd")
-youtube-dl `
-  --match-filter "is_live" `
-  --datebefore "$liveDateFilter" `
-  --download-archive "data/$($playlistId)/downloaded.txt" `
-  --output "data/$($playlistId)/%(id)s/audio.%(ext)s" `
-  --write-info-json `
-  --extract-audio `
-  --audio-format mp3  `
-  --ignore-errors `
-  https://www.youtube.com/playlist?list=$($playlistId)
-
 Write-Host "Generating Xml feed"
 dotnet run `
     --project .\MakeRss\MakeRss\MakeRss.csproj `
