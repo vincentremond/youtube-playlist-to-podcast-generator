@@ -14,11 +14,7 @@ const extractYoutubeInfo = function (url) {
   return groups;
 }
 
-// return console.log(extractYoutubeInfo('https://pas-bien.net/wl-listen/PLr2bpJwdJdMhtv0CV8QjP6AU7DAX0PpNw/ZiovoWa2DPw/audio.mp3'));
-
 const cleanTitle = t => t.replace(/[\[\]]/gi, '');
-
-const displayResult = episode => `- [ ] https://www.youtube.com/watch?v=${episode.videoId}&list=${episode.playlistId}[${episode.title}]`
 
 const podcastEpisodesInPocketCast = getJson("episodes_full_1604481224")
   .podcast
@@ -33,25 +29,18 @@ const podcastEpisodesInPocketCast = getJson("episodes_full_1604481224")
     }
   });
 const userEpisodes = getJson("episodes").episodes;
-const inYoutubePlaylistIds = getJson('inplaylist').map(e => {
-  console.log(e.link);
-  const { groups: { videoId } } = /^https:\/\/www.youtube.com\/watch\?v=(?<videoId>.+?)&list=(?<playlistId>.+?)&index=(?<index>\d+)(&t=(?<timestamp>\d+s))?$/.exec(e.link);
-  return videoId;
-});
-
 const finishedStatus = 3;
-
 const finishedEpisodesInPocketCastIds = userEpisodes
   .filter(e => e.playingStatus == finishedStatus)
   .map(e => e.uuid);
 
 const episodesToRemove = podcastEpisodesInPocketCast
   .filter(pe => finishedEpisodesInPocketCastIds.includes(pe.uuid))
-  .filter(pe => inYoutubePlaylistIds.includes(pe.videoId));
+  ;
 
-const result = episodesToRemove.map(displayResult).join('\n');
+const jsonResult = episodesToRemove.map(e => e.videoId);
 
-fs.writeFileSync('results.adoc', result);
+
+fs.writeFileSync('data/results.json', JSON.stringify(jsonResult));
 
 console.log('done');
-

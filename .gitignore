@@ -8,3 +8,4 @@ obj/
 data/
 results.adoc
 youtube-dlc.exe
+node_modules/

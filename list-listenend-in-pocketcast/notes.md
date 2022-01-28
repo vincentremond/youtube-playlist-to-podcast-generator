@@ -10,7 +10,7 @@ JSON.stringify(
         .from(document.querySelectorAll('ytd-playlist-video-list-renderer ytd-playlist-video-renderer'))
         .map(i => {
             const title = i.querySelector('#video-title').title;
-            const link = i.querySelector('#content>a').href;
+            const link = i.querySelector('#content a#thumbnail').href;
             return { title: title, link: link};
         })
 );
